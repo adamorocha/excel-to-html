@@ -30,3 +30,25 @@ input.addEventListener('change', () => {
   // Lendo o arquivo como um arquivo binário
   reader.readAsBinaryString(input.files[0]);
 });
+
+// Importando a biblioteca SheetJS
+import * as XLSX from 'xlsx';
+
+// Obtendo o input do usuário (arquivo do Excel)
+const input = document.querySelector('input[type="file"]');
+
+// Escutando o evento de mudança no input do usuário
+input.addEventListener('change', () => {
+  // Lendo o arquivo do Excel selecionado
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const data = new Uint8Array(event.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    // Obtendo a primeira planilha
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    // Convertendo as linhas da planilha em imagens
+    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    rows.forEach((row) => {
+      const img = document.createElement
