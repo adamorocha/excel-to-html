@@ -1,20 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Excel to Image</title>
-  </head>
-  <body>
-    <h1>Excel to Image</h1>
-    <form>
-      <label for="file-input">Select Excel file:</label>
-      <input type="file" id="file-input" accept=".xls,.xlsx">
-      <br><br>
-      <button type="button" onclick="convertToImages()">Convert to Images</button>
-    </form>
-    <br>
-    <div id="images-container"></div>
-  </body>
-  <script src="./excel-to-img.js"></script>
-  <script src="./index.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Excel to HTML</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <style>
+        #excel_table {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="file" name="file" accept=".xlsx">
+    <button type="button" onclick="convertExcelToHtml()">Exibir tabela</button>
+    <br><br>
+    <div id="excel_table"></div>
+    <script>
+        function handleFileSelect(evt) {
+            var files = evt.target.files;
+            var f = files[0];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, { type: 'binary' });
+                var sheet_name_list = workbook.SheetNames;
+                var html_table = "";
+                sheet_name_list.forEach(function (sheetName) {
+                    var worksheet = workbook.Sheets[sheetName];
+                    var sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    html_table += "<table style='border: 0px; background:#f3f3f3;'>";
+                    for (var i = 0; i < sheetData.length; i++) {
+                        var imgSrc = sheetData[i][1] + ".png"; // obtém o nome do arquivo de imagem
+                        html_table += "<tr>";
+                        html_table += "<td style='border: 0px; background:white;'><img src='img/" + imgSrc + "' alt='" + sheetData[i][1] + "' style='width:50px;'></td>"; // adiciona a imagem à primeira coluna (Imagem da marca ou categoria)
+                        var imgSrcCol0 = sheetData[i][0] + ".png"; // Obtém o nome do arquivo de imagem da sexta coluna
+                        html_table += "<td><img src='img/" + imgSrcCol0 + "' alt='" + sheetData[i][0] + "' style='width:20px; margin:5px; margin-bottom: -15px;'></td>"; // Exibe a imagem na 2 coluna coluna Atualização ou Inclusão
+                        var imgSrcCol6 = sheetData[i][5] + ".png"; // Obtém o nome do arquivo de imagem da sexta coluna
+                        html_table += "<td><img src='img/" + imgSrcCol6 + "' alt='" + sheetData[i][5] + "' style='width:20px; margin-top: -23px; position: absolute;left:70px;'></td>"; // Exibe a imagem na sexta coluna SALESFORCE, BEEDOO OU QUALI
+                        for (var j = 1; j < sheetData[i].length; j++) {
+                            if (j == 1) continue; // Pula a segunda coluna para não exibir o texto
+                            if (j == 4) continue; // Pula a sexta coluna
+                            if (j == 5) continue; // Pula a sexta coluna para não exibir o nome do sistema (Beedoo ou Salesforce)
+                            if (j === 6) {
+                                html_table += "<td><strong>" + XLSX.SSF.format('dd/mm', sheetData[i][j]) + "</strong></td>";
+                            } else if (j === 2) {
+                                html_table += "<td><strong>" + sheetData[i][j] + " </strong><br> " + sheetData[i][j + 1] + "</td>";
+                                j++; // incrementa o índice j para pular a próxima coluna (terceira coluna)
+                            } else {
+                                html_table += "<td>" + sheetData[i][j] + "</td>";
+                            }
+                        }
+                        html_table += "<td><a href='" + sheetData[i][4] + "'><img src='img/link.png' style='width:20px;margin:5px'></a></td></tr>";
+                    }
+                    html_table += "</table>";
+                });
+                document.getElementById('excel_table').innerHTML = html_table;
+            };
+            reader.readAsBinaryString(f);
+        }
+
+        function convertExcelToHtml() {
+            var excelTable = document.getElementById("excel_table");
+            excelTable.style.display = "block";
+            handleFileSelect(document.getElementById("file"));
+        }
+
+        document.getElementById('file').addEventListener('change', handleFileSelect, false);
+    </script>
+</body>
 </html>
