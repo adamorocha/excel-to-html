@@ -4,22 +4,97 @@
     <meta charset="UTF-8">
     <title>Excel to HTML</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+
     <style>
-        #excel_table {
-            display: none;
+        .button {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 16px 0px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            cursor: pointer;
+            align-content: center;
         }
-    </style>
+        
+        .button1 {
+            background-color: white; 
+            color: black; 
+            border: 2px solid #4CAF50;
+        }
+        
+        .button1:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .button2 {
+            background-color: white; 
+            color: #008CBA;
+            border: 2px solid #008CBA;
+            width: 45%;
+        }
+        
+        .button2:hover {
+            background-color: #008CBA;
+            color: white;
+        }
+        
+        .button3 {
+            background-color: white; 
+            color: #f44336; 
+            border: 2px solid #f44336;
+            width: 45%;
+        }
+        .button3:hover {
+            background-color: #f44336;
+            color: white;
+        }
+        .button4 {
+            background-color: white;
+            color: black;
+            border: 2px solid #e7e7e7;
+        }
+        .button4:hover {background-color: #e7e7e7;}
+        .button5 {
+            background-color: white;
+            color: black;
+            border: 2px solid #555555;
+        }
+        .button5:hover {
+            background-color: #555555;
+            color: white;
+        }
+
+        input[type="file"] {
+            display: none;
+    
+
+    }
+
+        </style>
+
+
 </head>
 <body>
-    <div>
-        <p><input type="file" id="file" name="file" accept=".xlsx"></p>
-        <p><button type="button" onclick="convertExcelToHtml()">Exibir tabela</button></p>
-        <p><button onclick="copiarHTML()">Copiar HTML</button></p>
+    <div style="text-align: center;">
+        <label class="button button2" for="file">Enviar arquivo</label>
+        <input type="file" id="file" name="file" accept=".xlsx">
+        <button class="button button3" onclick="copiarHTML()">Copiar HTML</button>
+        
     </div>
 
     <hr>
 
-    <div id="excel_table"></div>
+    <div id="excel_table" style="padding:50px;"></div>
     <script>
         function handleFileSelect(evt) {
             var files = evt.target.files;
@@ -33,28 +108,27 @@
                 sheet_name_list.forEach(function (sheetName) {
                     var worksheet = workbook.Sheets[sheetName];
                     var sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    html_table += "<table style='border: 1px #f1f1f1; background:#f3f3f3;width:750px'>";
+                    html_table += "<table class='table' style='margin: 0 auto; background:#f3f3f3;width:800px;border-radius: 5px;'>";
                     for (var i = 0; i < sheetData.length; i++) {
                         var imgSrc = sheetData[i][1] + ".png"; // obtém o nome do arquivo de imagem
                         html_table += "<tr>";
-                        html_table += "<td style='border: 0px; background:white;'><img src='https://adamorocha.github.io/excel-to-html/img/" + imgSrc + "' alt='" + sheetData[i][1] + "' style='width:50px;'></td>"; // adiciona a imagem à primeira coluna (Imagem da marca ou categoria)
+                        html_table += "<td><img src='https://adamorocha.github.io/excel-to-html/img/" + imgSrc + "' alt='" + sheetData[i][1] + "' style='width:50px;margin:8px 2px;'></td>"; // adiciona a imagem à primeira coluna (Imagem da marca ou categoria)
                         var imgSrcCol0 = sheetData[i][0] + ".png"; // Obtém o nome do arquivo de imagem da segunda coluna
                         var imgSrcCol6 = sheetData[i][5] + ".png"; // Obtém o nome do arquivo de imagem da sexta coluna
-                        html_table += "<td><img src='https://adamorocha.github.io/excel-to-html/img/" + imgSrcCol0 + "' alt='" + sheetData[i][0] + "' style='width:20px;'> <br> <img src='https://adamorocha.github.io/excel-to-html/img/" + imgSrcCol6 + "' alt='" + sheetData[i][5] + "' style='width:20px;'></td>"; // Exibe a imagem na 2 e 6 coluna Atualização ou Inclusão e Plataforma
+                        html_table += "<td><img src='https://adamorocha.github.io/excel-to-html/img/" + imgSrcCol0 + "' alt='" + sheetData[i][0] + "' style='width:20px;margin:2px 2px'> <br> <img src='https://adamorocha.github.io/excel-to-html/img/" + imgSrcCol6 + "' alt='" + sheetData[i][5] + "' style='width:20px;margin:8px 2px'></td>"; // Exibe a imagem na 2 e 6 coluna Atualização ou Inclusão e Plataforma
                         for (var j = 1; j < sheetData[i].length; j++) {
                             if (j == 1) continue; // Pula a segunda coluna para não exibir o texto
                             if (j == 4) continue; // Pula a sexta coluna
                             if (j == 5) continue; // Pula a sexta coluna para não exibir o nome do sistema (Beedoo ou Salesforce)
                             if (j === 6) {
-                                html_table += "<td><strong>" + XLSX.SSF.format('dd/mm', sheetData[i][j]) + "</strong></td>";
+                                html_table += "<td style='text-align: center;'><strong>" + XLSX.SSF.format('dd/mm', sheetData[i][j]) + "</strong><a href='" + sheetData[i][4] + "'><img src='https://adamorocha.github.io/excel-to-html/img/Link.png' style='width:20px;margin:5px'></a></td>";
                             } else if (j === 2) {
-                                html_table += "<td><strong>" + sheetData[i][j] + " </strong><br> " + sheetData[i][j + 1] + "</td>";
+                                html_table += "<td style='border-top: 1px solid #bdbdbd;width:80%;'><strong>" + sheetData[i][j] + " </strong><br> " + sheetData[i][j + 1] + "</td>";
                                 j++; // incrementa o índice j para pular a próxima coluna (terceira coluna)
                             } else {
-                                html_table += "<td>" + sheetData[i][j] + "</td>";
+                                html_table += "<tr>" + sheetData[i][j] + "</tr>";
                             }
                         }
-                        html_table += "<td><a href='" + sheetData[i][4] + "'><img src='https://adamorocha.github.io/excel-to-html/img/Link.png' style='width:20px;margin:5px'></a></td></tr>";
                     }
                     html_table += "</table>";
                 });
@@ -65,7 +139,6 @@
 
         function convertExcelToHtml() {
             var excelTable = document.getElementById("excel_table");
-            excelTable.style.display = "block";
             handleFileSelect(document.getElementById("file"));
         }
 
