@@ -108,7 +108,7 @@
                 sheet_name_list.forEach(function (sheetName) {
                     var worksheet = workbook.Sheets[sheetName];
                     var sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    html_table += "<p style='text-align: center !important;margin-bottom: 0px;'><img src='https://s3.amazonaws.com/beedoo-user-us/atentoop01/adamorocha/ArticleController/image_embedded/4359662f198d188357413706f7659fc5.png' style='margin: 0 auto; width: 900px;'></p><table class='table' style='margin: 0 auto; background:#f3f3f3;width:900px;border-collapse: collapse;border: 1px solid #DDDDDD;'>"; //Inicio da tabela e incluso antes um Banner
+                    html_table += "<p style='text-align: center !important;margin-bottom: 0px;'><img src='https://adamorocha.github.io/excel-to-html/img/banner_unilever_top.png' style='margin: 0 auto; width: 900px;'></p><table class='table' style='margin: 0 auto; background:#f3f3f3;width:900px;border-collapse: collapse;border: 1px solid #DDDDDD;'>"; //Inicio da tabela e incluso antes um Banner
                     for (var i = 0; i < sheetData.length; i++) {
                         var imgSrc = sheetData[i][1] + ".png"; // obtém o nome do arquivo de imagem
                         html_table += "<tr>";
